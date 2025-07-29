@@ -487,8 +487,8 @@ def rx(sample_rate, sf_list, bandwidth, receiving, packet_queue, complex_data_nu
 
 class lora_transceiver():
 
-    def __init__(self,address,rx_gain,tx_gain,bandwidth, rx_freq, tx_freq, sample_rate, rx_channel_ID, tx_channel_ID, signal_amplitude = 1):
-        self.address = address
+    def __init__(self,serial,rx_gain,tx_gain,bandwidth, rx_freq, tx_freq, sample_rate, rx_channel_ID, tx_channel_ID, signal_amplitude = 1):
+        self.serial = serial
         self.rx_gain = rx_gain # dB
         self.tx_gain = tx_gain # dB
         self.bandwidth = bandwidth  # Hz
@@ -498,7 +498,7 @@ class lora_transceiver():
         self.receiving = mp.Value("i",False)
         self.sending = mp.Value("i",False)
         self.signal_amplitude = signal_amplitude
-        self.usrp = uhd.usrp.MultiUSRP("address=" + self.address)
+        self.usrp = uhd.usrp.MultiUSRP("serial=" + self.serial)
         self.rx_channel = rx_channel_ID
         self.tx_channel = tx_channel_ID
         self.usrp.set_rx_rate(sample_rate, self.rx_channel)

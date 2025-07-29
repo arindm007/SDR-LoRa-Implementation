@@ -11,7 +11,7 @@ import time
 
 
 
-address = "192.168.40.2"
+serial = "34A2548" # Serial address of the USRP
 rx_gain = 10
 tx_gain = 20
 bandwidth = 125000
@@ -29,11 +29,14 @@ SF = 7
 
 
 sleep_time = 1
-loradio = lora_transceiver.lora_transceiver(address, rx_gain, tx_gain, bandwidth, rx_freq, tx_freq, sample_rate,
+loradio = lora_transceiver.lora_transceiver(serial, rx_gain, tx_gain, bandwidth, rx_freq, tx_freq, sample_rate,
                                             rx_ch_ID, tx_ch_ID)
 
 
-data_array = np.ones(500,dtype=np.uint8)
+# data_array = np.ones(500,dtype=np.uint8)
+data_array = np.frombuffer(b"Hello, this is a test message for LoRa transmission.", dtype=np.uint8)
+
+
 packet_size = 250
 srcID = 0
 dstID = 1
