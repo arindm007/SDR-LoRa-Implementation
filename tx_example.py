@@ -13,10 +13,11 @@ def main():
     No arguments.
     """
 
-    serial = "34A2548" # Serial address of the USRP
+    serial = "3439ADE" # Serial address of the USRP
     rx_gain = 70
     tx_gain = 80
-    bandwidth = 125000
+    # bandwidth = 125000
+    bandwidth = 250000
     center_freq = 1e9
     sample_rate = 1e6
 
@@ -36,7 +37,7 @@ def main():
 
 
     # data_array = np.ones(500,dtype=np.uint8)
-    data_array = np.frombuffer(b"This is a test paragraph generated to exactly match the maximum MAVLink 2.", dtype=np.uint8)
+    data_array = np.frombuffer(b"This is a test paragraph generated to exactly match the maximum MAVLink 2 message size. Each byte in this sentence is counted precisely, ensuring the total length is exactly two hundred and fifty bytes. This helps in testing the LoRa transmitter cod.", dtype=np.uint8)
 
 
 
@@ -53,10 +54,10 @@ def main():
         tx_queue.put(pack)
 
 
-    # for _ in range(10):
+    # for _ in range(1):
     #     for pack in data:
     #         tx_queue.put(pack)
-    #     time.sleep(3)
+    #     time.sleep(1)
 
 if __name__ == "__main__":
     main()

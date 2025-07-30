@@ -40,7 +40,7 @@ def pkt_reader(pkt_queue):
 
 
 
-serial = "34A2548"  # Serial address of the USRP
+serial = "3439ADE"  # Serial address of the USRP
 rx_gain = 70
 tx_gain = 80
 bandwidth = 125000
@@ -59,7 +59,9 @@ sf = [7,8,9,10,11,12]
 sleep_time = 1
 
 rx_listeners = list()
-samplesBlockRec = 3000000
+# samplesBlockRec = 3000000
+samplesBlockRec = 500000
+
 loradio = lora_transceiver.lora_transceiver(serial, rx_gain, tx_gain, bandwidth, rx_freq, tx_freq, sample_rate,
                                             rx_ch_ID, tx_ch_ID)
 

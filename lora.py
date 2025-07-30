@@ -711,7 +711,7 @@ def lora_preamble(n_preamble, k1, k2, BW, K, OSF, t0_frac=0, phi0=0):
     (u1, phi) = lora_chirp(+1, k1, BW, K, OSF, t0_frac, phi)
     (u2, phi) = lora_chirp(+1, k2, BW, K, OSF, t0_frac, phi)
     (d0, phi) = lora_chirp(-1, 0, BW, K, OSF, t0_frac, phi)
-    (d0_4, phi) = chirp(BW / 2, K * OSF / 4, 1 / (BW * OSF), -np.power(BW, 2) / K, t0_frac, phi)
+    (d0_4, phi) = chirp(BW / 2, int(K * OSF / 4), 1 / (BW * OSF), -np.power(BW, 2) / K, t0_frac, phi)
     s = np.concatenate((np.tile(u0, (n_preamble)), u1, u2, d0, d0, d0_4))
     return s, phi
 
@@ -721,7 +721,7 @@ def lora_chirp(mu, k, BW, K, OSF, t0_frac=0, phi0=0):
     fs = BW * OSF
     Ts = 1 / fs
     # number of samples in one period T
-    N = K * OSF
+    N = int(K * OSF)
     T = N * Ts
     # derivative of the instant frequency
     Df = mu * BW / T
