@@ -6,6 +6,7 @@ import multiprocessing as mp
 import multiprocessing.queues as mp_queues
 import queue as q
 import time
+from ptp_sync_example import PTPSyncSlave  # Import the PTP sync slave
 
 
 
@@ -15,6 +16,7 @@ import time
 #         if(isinstance(pkt,lora.LoRaPacket)):
 #             print(pkt)
 def pkt_reader(pkt_queue):
+    ptp_slave = PTPSyncSlave()  # Create a PTP sync slave instance
     """
     Args:
         pkt_queue: multiprocessing.Queue, queue from which packets are read and printed.
@@ -22,6 +24,9 @@ def pkt_reader(pkt_queue):
     while True:
         pkt = pkt_queue.get()
         if isinstance(pkt, lora.LoRaPacket):
+            # Check for SYNC packet and update time offset
+            ptp_slave.process_packet(pkt)
+            print(f"PTP Synced time: {ptp_slave.get_synced_time()}")
             print("\n=== Received LoRa Packet ===")
             print(f"Source ID: {pkt.src}")
             print(f"Destination ID: {pkt.dst}")

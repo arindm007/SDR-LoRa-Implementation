@@ -6,6 +6,7 @@ import multiprocessing as mp
 import multiprocessing.queues as mp_queues
 import queue as q
 import time
+from ptp_sync_example import PTPSyncMaster  # Import the sync master class
 
 def main():
     """
@@ -28,18 +29,20 @@ def main():
 
 
     SF = 7
-
-
-
     sleep_time = 1      
     loradio = lora_transceiver.lora_transceiver(serial, rx_gain, tx_gain, bandwidth, rx_freq, tx_freq, sample_rate,
                                                 rx_ch_ID, tx_ch_ID)
 
+    # --- PTP Sync Master ---
+    SYNC_CODE = 250
+    ptp_master = PTPSyncMaster(loradio, SF, bandwidth, srcID=0, dstID=1, CR=1, interval=5)
+    # Start SYNC packet sender in a background process
+    sync_proc = mp.Process(target=ptp_master.send_sync)
+    sync_proc.daemon = True
+    sync_proc.start()
 
     # data_array = np.ones(500,dtype=np.uint8)
     data_array = np.frombuffer(b"This is a test paragraph generated to exactly match the maximum MAVLink 2 message size. Each byte in this sentence is counted precisely, ensuring the total length is exactly two hundred and fifty bytes. This helps in testing the LoRa transmitter cod.", dtype=np.uint8)
-
-
 
     packet_size = 250
     srcID = 0
@@ -58,6 +61,9 @@ def main():
     #     for pack in data:
     #         tx_queue.put(pack)
     #     time.sleep(1)
+
+    # Optionally, join the sync process if you want to keep the main alive
+    # sync_proc.join()
 
 if __name__ == "__main__":
     main()
