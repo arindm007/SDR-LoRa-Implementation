@@ -9,18 +9,36 @@ import time
 
 
 
+# def pkt_reader(pkt_queue):
+#     while True:
+#         pkt = pkt_queue.get()
+#         if(isinstance(pkt,lora.LoRaPacket)):
+#             print(pkt)
 def pkt_reader(pkt_queue):
     while True:
         pkt = pkt_queue.get()
-        if(isinstance(pkt,lora.LoRaPacket)):
-            print(pkt)
+        if isinstance(pkt, lora.LoRaPacket):
+            print("\n=== Received LoRa Packet ===")
+            print(f"Source ID: {pkt.src}")
+            print(f"Destination ID: {pkt.dst}")
+            # print(f"Sequence Number: {pkt.sqn}")
+            print(f"Payload (raw): {pkt.payload}")
+            try:
+                print(f"Payload (decoded): {pkt.payload.tobytes().decode(errors='ignore')}")
+            except Exception as e:
+                print(f"Could not decode payload: {e}")
+            # print(f"Metadata: {pkt.metadata}")
+            print("============================\n")
+        else:
+            print(f"Received non-LoRaPacket: {pkt} (type: {type(pkt)})")
+
 
 
 
 
 serial = "34A2548"  # Serial address of the USRP
-rx_gain = 10
-tx_gain = 20
+rx_gain = 70
+tx_gain = 80
 bandwidth = 125000
 center_freq = 1e9
 sample_rate = 1e6
@@ -29,6 +47,8 @@ rx_freq = 990e6  # Hz
 tx_freq = 1010e6  # Hz
 tx_ch_ID = 1
 rx_ch_ID = 0
+
+
 
 
 sf = [7,8,9,10,11,12]

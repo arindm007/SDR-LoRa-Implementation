@@ -12,8 +12,8 @@ import time
 
 
 serial = "34A2548" # Serial address of the USRP
-rx_gain = 10
-tx_gain = 20
+rx_gain = 70
+tx_gain = 80
 bandwidth = 125000
 center_freq = 1e9
 sample_rate = 1e6
@@ -28,13 +28,14 @@ SF = 7
 
 
 
-sleep_time = 1
+sleep_time = 1      
 loradio = lora_transceiver.lora_transceiver(serial, rx_gain, tx_gain, bandwidth, rx_freq, tx_freq, sample_rate,
                                             rx_ch_ID, tx_ch_ID)
 
 
 # data_array = np.ones(500,dtype=np.uint8)
-data_array = np.frombuffer(b"Hello, this is a test message for LoRa transmission.", dtype=np.uint8)
+data_array = np.frombuffer(b"This is a test paragraph generated to exactly match the maximum MAVLink 2.", dtype=np.uint8)
+
 
 
 packet_size = 250
@@ -48,3 +49,9 @@ data = lora_utils.pack_lora_data(data_array, SF, bandwidth, packet_size, srcID, 
 
 for pack in data:
     tx_queue.put(pack)
+
+
+# for _ in range(10):
+#     for pack in data:
+#         tx_queue.put(pack)
+#     time.sleep(3)

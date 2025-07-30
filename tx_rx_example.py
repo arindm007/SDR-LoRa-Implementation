@@ -50,17 +50,17 @@ rx_gain = 70
 tx_gain = 80
 # bandwidth = 125000
 bandwidth = 200000  # Hz
-center_freq = 4.7e8  # Hz
+center_freq = 1e9  # Hz
 sample_rate = 1e6
 
 
 
 
-# tx_freq = 990e6  # Hz
-# rx_freq = 1010e6  # Hz
+tx_freq = 990e6  # Hz
+rx_freq = 1010e6  # Hz
 
-tx_freq = 4.7e8  # Hz
-rx_freq = 4.7e8  # Hz
+# tx_freq = 4.7e8  # Hz
+# rx_freq = 4.7e8  # Hz
 
 ID = int(input("Insert Node ID (0 or 1):\n"))
 
@@ -96,7 +96,7 @@ loradio = lora_transceiver.lora_transceiver(serial, rx_gain, tx_gain, bandwidth,
 # For example, if you want to send "Hello, this is a test message for LoRa transmission."
 # you can do it like this:
 
-data_array = np.frombuffer(b"Hello, this is a test message for LoRa transmission.", dtype=np.uint8)
+data_array = np.frombuffer(b"Hello, this is a test message for Arindam transmission.", dtype=np.uint8)
             
 
 
@@ -122,7 +122,7 @@ for i in range(len(sf_rx)):
     rx_listeners[i].start()
 
 
-for _ in range(10):
+for _ in range(1):
     for pack in data:
         tx_queue.put(pack)
     time.sleep(3)
