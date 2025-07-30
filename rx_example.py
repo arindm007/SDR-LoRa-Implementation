@@ -15,6 +15,10 @@ import time
 #         if(isinstance(pkt,lora.LoRaPacket)):
 #             print(pkt)
 def pkt_reader(pkt_queue):
+    """
+    Args:
+        pkt_queue: multiprocessing.Queue, queue from which packets are read and printed.
+    """
     while True:
         pkt = pkt_queue.get()
         if isinstance(pkt, lora.LoRaPacket):

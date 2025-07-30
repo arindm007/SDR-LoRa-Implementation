@@ -1,5 +1,3 @@
-
-
 import threading
 import numpy as np
 #import queue as Queue
@@ -40,6 +38,13 @@ np.set_printoptions(threshold=sys.maxsize)
 
 
 def threshold_trigger_process(index_queue,SF_sample_th, queue_arr_tuple):
+    """
+    Args:
+        index_queue: multiprocessing.Queue, queue for indices to trigger threshold.
+        SF_sample_th: numpy.ndarray, array of sample thresholds for each spreading factor.
+        queue_arr_tuple: tuple of multiprocessing.Queue, queues for each SF to signal threshold crossing.
+    """
+
     queue_arr = np.array(queue_arr_tuple, dtype= mp_queues.Queue)
     samples_counter = np.zeros((SF_sample_th.size))
 
@@ -54,8 +59,18 @@ def threshold_trigger_process(index_queue,SF_sample_th, queue_arr_tuple):
 
 
 def decoder_process(shm_name,complex_data_number, buf_size,sf_index_queue,pkt_queue, sf, BW, fs, SF_sample_th):
-    # temp_samples = np.zeros(complex_data_number,dtype=np.complex64)
-
+    """
+    Args:
+        shm_name: str, name of the shared memory block.
+        complex_data_number: int, number of complex samples per buffer.
+        buf_size: int, buffer size multiplier.
+        sf_index_queue: multiprocessing.Queue, queue for SF window indices.
+        pkt_queue: multiprocessing.Queue, queue to put decoded packets.
+        sf: int, spreading factor.
+        BW: int or float, bandwidth.
+        fs: int or float, sampling frequency.
+        SF_sample_th: numpy.ndarray, sample thresholds for each SF.
+    """
 
 
     print("Decoder on SF", str(sf), ", PID:", str(os.getgid()))
@@ -488,6 +503,22 @@ def rx(sample_rate, sf_list, bandwidth, receiving, packet_queue, complex_data_nu
 class lora_transceiver():
 
     def __init__(self,serial,rx_gain,tx_gain,bandwidth, rx_freq, tx_freq, sample_rate, rx_channel_ID, tx_channel_ID, signal_amplitude = 1):
+        """
+        Args:
+            serial: str, serial address of the USRP device.
+            rx_gain: int or float, receiver gain.
+            tx_gain: int or float, transmitter gain.
+            bandwidth: int or float, channel bandwidth.
+            rx_freq: int or float, receiver frequency in Hz.
+            tx_freq: int or float, transmitter frequency in Hz.
+            sample_rate: int or float, sample rate in Hz.
+            rx_channel_ID: int, receiver channel ID.
+            tx_channel_ID: int, transmitter channel ID.
+        Returns:
+            lora_transceiver: Instance of LoRa transceiver class.
+        """
+
+
         self.serial = serial
         self.rx_gain = rx_gain # dB
         self.tx_gain = tx_gain # dB
@@ -528,6 +559,14 @@ class lora_transceiver():
         #print("Main class", self.rx_streamer)
 
     def rx_start(self, sf_list, complex_data_number = 3000000, block_size = 20):
+        """
+        Args:
+            sf: list of int, spreading factors to listen for.
+            samplesBlockRec: int, number of samples in the base receiving window.
+        Returns:
+            list of multiprocessing.Queue: Queues for each SF to receive packets.
+        """
+
         # THE DEFAULT MINIMUM BLOCK OF SAMPLES ROUGHLY CORRESPONDS TO 5 TIMES THE SIZE OF A 251 BYTES SF7 PACKET
         rx_packet_queue = np.empty((len(sf_list)), dtype=mp_queues.Queue)
         #print("SF LIST",sf_list)
@@ -573,7 +612,14 @@ class lora_transceiver():
 
 
 
-    def tx_start(self, sleep_time, verbose = False):
+    def tx_start(self, sleep_time=1, verbose=False):
+        """
+        Args:
+            sleep_time: int or float, time to sleep between transmissions (default 1).
+            verbose: bool, whether to print verbose output (default False).
+        Returns:
+            multiprocessing.Queue: Queue for transmitting packets.
+        """
 
         if(not self.sending.value):
             self.tx_queue = mp.Queue(0)

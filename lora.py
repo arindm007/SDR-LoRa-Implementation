@@ -22,6 +22,27 @@ min_time_lora_packet = 20e-3 #20 milliseconds
 
 
 def lora_packet(BW, OSF, SF, k1, k2, n_pr, IH, CR, MAC_CRC, SRC, DST, SEQNO, MESSAGE, Trise, t0_frac, phi0):
+    """
+    Args:
+        BW: int or float, bandwidth.
+        OSF: int or float, oversampling factor.
+        SF: int, spreading factor.
+        k1: int, preamble start chirp index.
+        k2: int, preamble end chirp index.
+        n_pr: int, number of preamble chirps.
+        IH: bool, implicit header mode.
+        CR: int, coding rate.
+        MAC_CRC: int, MAC CRC value.
+        SRC: int, source node ID.
+        DST: int, destination node ID.
+        SEQNO: int, sequence number.
+        MESSAGE: numpy.ndarray, message payload.
+        Trise: float, rising edge duration.
+        t0_frac: float, initial time offset fraction.
+        phi0: float, initial phase offset.
+    Returns:
+        tuple: (samples, header chirps, payload chirps)
+    """
     # in our implementation, the payload includes a 4 byte pseudo-header: (SRC, DST, SEQNO, LENGTH)
     LENGTH = np.uint16(4 + (MESSAGE.size))
 
@@ -79,6 +100,13 @@ def lora_packet(BW, OSF, SF, k1, k2, n_pr, IH, CR, MAC_CRC, SRC, DST, SEQNO, MES
 
 
 def lora_header_init(SF, IH):
+    """
+    Args:
+        SF: int, spreading factor.
+        IH: bool, implicit header mode.
+    Returns:
+        tuple: (number of header chirps, number of header bits)
+    """
     if (IH):
         n_sym_hdr = np.uint16(0)
         n_bits_hdr = np.uint16(0)
@@ -95,6 +123,17 @@ def lora_header_init(SF, IH):
 
 # function [k_hdr,payload_ofs] =
 def lora_header(SF, LENGTH, CR, MAC_CRC, PAYLOAD, payload_ofs):
+    """
+    Args:
+        SF: int, spreading factor.
+        LENGTH: int, payload length.
+        CR: int, coding rate.
+        MAC_CRC: int, MAC CRC value.
+        PAYLOAD: numpy.ndarray, payload data.
+        payload_ofs: int, payload offset.
+    Returns:
+        tuple: (header chirps, payload offset)
+    """
     # header parity check matrix (reverse engineered through brute force search)
 
     header_FCS = np.array(([1, 1, 0, 0, 0], [1, 0, 1, 0, 0], [1, 0, 0, 1, 0], [1, 0, 0, 0, 1], [0, 1, 1, 0, 0],

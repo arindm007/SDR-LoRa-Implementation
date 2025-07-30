@@ -1,4 +1,3 @@
-
 import numpy as np
 import lora
 
@@ -20,10 +19,29 @@ MAX_PACKET_SIZE = 251
 
 
 def rate_calculator(sf, bw, cr):
+    """
+    Args:
+        sf: int, spreading factor.
+        bw: int or float, bandwidth.
+        cr: int or float, coding rate.
+    Returns:
+        float: Calculated data rate.
+    """
     return sf * (4 / (4 + cr)) * (bw / (1 * np.power(2, sf)))
 
 
 def gen_pack_polling(SF, BW, srcID, dstID, CR = 1, brdcst = False):
+    """
+    Args:
+        SF: int, spreading factor.
+        BW: int or float, bandwidth.
+        srcID: int, source node ID.
+        dstID: int, destination node ID.
+        CR: int, coding rate (default 1).
+        brdcst: bool, whether to broadcast polling (default False).
+    Returns:
+        LoRaPacket: Polling packet.
+    """
     payload = np.zeros((1,), dtype=np.uint8)
     if(brdcst):
         payload[0] = POLLING_CODE_BROADCAST
@@ -33,6 +51,19 @@ def gen_pack_polling(SF, BW, srcID, dstID, CR = 1, brdcst = False):
                     cr=CR, ih=0, SF=SF, BW=BW)
 
 def pack_lora_data(data, SF, BW, packet_size, srcID, dstID, extended_sqn=True, CR = 1):
+    """
+    Args:
+        data: numpy.ndarray, data to be packed.
+        SF: int, spreading factor.
+        BW: int or float, bandwidth.
+        packet_size: int, size of each packet.
+        srcID: int, source node ID.
+        dstID: int, destination node ID.
+        extended_sqn: bool, use extended sequence numbering (default True).
+        CR: int, coding rate (default 1).
+    Returns:
+        numpy.ndarray: Array of LoRaPacket objects.
+    """
     if (extended_sqn):
         act_pkt_size = packet_size - 1
         pkt_group = -1
@@ -63,7 +94,18 @@ def pack_lora_data(data, SF, BW, packet_size, srcID, dstID, extended_sqn=True, C
 
 
 def pack_lora_nack(data, SF, BW, packet_size, srcID, dstID, CR = 1):
-
+    """
+    Args:
+        data: numpy.ndarray, data to be packed.
+        SF: int, spreading factor.
+        BW: int or float, bandwidth.
+        packet_size: int, size of each packet.
+        srcID: int, source node ID.
+        dstID: int, destination node ID.
+        CR: int, coding rate (default 1).
+    Returns:
+        numpy.ndarray: Array of LoRaPacket objects with NACK/ACK codes.
+    """
     act_pkt_size = packet_size - 1
 
     if(data.size == 0):
@@ -96,7 +138,14 @@ def pack_lora_nack(data, SF, BW, packet_size, srcID, dstID, CR = 1):
     return pack_array
 
 
-def pack16bit(high_byte,low_byte):
+def pack16bit(high_byte, low_byte):
+    """
+    Args:
+        high_byte: int, high byte value.
+        low_byte: int, low byte value.
+    Returns:
+        int: Combined 16-bit value.
+    """
     high_byte = np.uint8(high_byte)
     low_byte = np.uint8(low_byte)
     temp_arr = np.array(([low_byte, high_byte])).view(dtype = np.uint16)
